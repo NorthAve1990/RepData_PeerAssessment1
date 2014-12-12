@@ -1,22 +1,53 @@
 ----------------------------------
 Title   : "PA1_template"
 Author  : "Sridhar Somasundharam"
-Date    : "Tuesday, July 15, 2014"
+Date    : "Friday, December 12, 2014"
 Output  : html_document
 ----------------------------------
+Loading and preprocessing the data
+
+1. Load the data (i.e. read.csv())
+2. Process/transform the data (if necessary) into a format suitable for your analysis
+
+```{r, echo=TRUE}
+getwd()
+setwd("C:/Users/ssomasundharam/Documents/Data Science/Coursera R/Reproducible Research")
+```
+
+What is mean total number of steps taken per day?
+
+1. Make a histogram of the total number of steps taken each day
+2. Calculate and report the mean and median total number of steps taken per day
 
 ```{r, echo=TRUE}
 
-acdata <- read.csv("activity.csv", na.strings=c("", "NA"))
+# acdata <- read.csv("activity.csv", na.strings=c("", "NA"))
+# library(data.table)
+# acdate <- data.table(acdata)
+# acdate[, sum(complete.cases(acdata)), by = date]
+# acstep <- acdate[,  by = date]
+# acmean <- mean(acstep)
+# head(acmean)
+# achist <- hist(acdate$interval)
+# achist
+
+acdata <- read.csv("activity.csv")
 library(data.table)
 acdate <- data.table(acdata)
-# acdate[, sum(complete.cases(acdata)), by = date]
-acstep <- acdate[,  by = date]
-acmean <- mean(acstep)
-head(acmean)
+acstep <- acdate[,  by = steps]
 achist <- hist(acdate$interval)
-achist
 
+acmean <- c(acstep, mean, na.rm = TRUE)
+
+atstep <- (acdata$steps)
+atstep[is.na(atstep)] <- 0
+median(atstep)
+```
+
+```{r, echo=TRUE}
+
+# acmean
+achist
 
 ```
 
