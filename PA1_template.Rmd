@@ -28,35 +28,14 @@ acdate <- data.table(acompe)
 acstep <- acdate[,sum(steps), by="date"]
 library(ggplot2)
 ggplot(acstep, aes(x = V1)) + geom_histogram() + xlab("Steps Taken Per Day")
+
 ```
 
-## Mean and Median value for Total steps
+# Mean and Median value for Total steps
 
 ```{r, echo=FALSE}
 mean(acstep$V1)
 median(acstep$V1)
-
-```
-
-```{r, echo=FALSE}
-
-acmean <- acdate[,mean(steps), by="interval"]
-ggplot(acmean, aes(x = interval, y = V1)) + geom_line() + ylab("Average Steps")
-
-```
-
-## Mean and Median value for Average steps
-
-```{r, echo=FALSE}
-mean(acmean$V1)
-median(acmean$V1)
-
-```
-
-```{r, echo=FALSE}
-
-# atstep[is.na(atstep)] <- 0
-# median(atstep)
 
 ```
 
@@ -66,27 +45,64 @@ What is the average daily activity pattern?
 
     Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
+# Average Number of Steps Taken
 ```{r, echo=FALSE}
 
-acdata <- read.csv("activity.csv")
-day <- weekdays(as.Date(acdata$date))
-wday <- as.POSIXlt(acdata$date)$wday
-wd <- subset(acdata, wday != "0" | wday != "6")
-plot(interval ~ date, wd, type = "l", main = "Average Number of Steps Taken")
+acmean <- acdate[,mean(steps), by="interval"]
+ggplot(acmean, aes(x = interval, y = V1)) + geom_line() + ylab("Average Steps")
 
 ```
 
-Sort by date and interval
+# Maximum Average Steps
 
 ```{r, echo=FALSE}
 
-plot(steps ~ interval, wd, type = "l", main = "Average Number of Steps Taken")
+acmean[which(acmean$V1 == max(acmean$V1)),]
+sum(is.na(acmean$steps))
+
+```
+
+```{r, echo=FALSE}
+
+acsteps <- acdata$steps
+acsteps <- as.numeric(acsteps)
+library(data.table)
+acdate <- data.table(acmean)
+for (i in 1:length(acsteps)) {
+     if(is.na(acsteps[i]))
+     acsteps[i] <- acmean[acmean$interval == acdata[i,3] ,2]
+  }
+acdata$steps <- acsteps
+
+
+```
+
+
+```{r, echo=FALSE}
+
+acdate <- data.table(acdata)
+a_step <- acdate[,sum(steps), by = "date"]
+library(ggplot2)
+ggplot(a_step, aes(x = V1)) + geom_histogram() + xlab("Steps Taken Per Day")
+
+```
+
+Mean and Median value
+
+```{r, echo=FALSE}
+
+mean(a_step$V1)
+median(a_step$V1)
 
 ```
 
 Renumber row names
 ```{r, echo=FALSE}
 
-plot.ts(wd, ylab = "Interval", main = "Average Number of Steps Taken")
+acdate$date <- as.Date(acdate$date)
+acdate$day  <- weekdays(acdate$date)
+acdate$weekend <- ifelse(acdate$day == "Saturday" | acdate$day == "Sunday", "Weekend", "Weekday")
+acweek <- acdate[, mean(steps), by = c("interval", "weekend")]
+ggplot(acweek, aes(x = interval, y = V1)) + facet_wrap(~weekend, nrow = 2) + geom_line() + ylab("Number of Steps")
 
 ```
